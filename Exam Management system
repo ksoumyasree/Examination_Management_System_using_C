@@ -1,0 +1,248 @@
+#include <stdio.h>
+
+struct Student
+{
+    char name[20];
+    int rollNumber;
+    int attendance;
+    int feesPaid;
+    int eligible;
+    int SE;
+    int DAA;
+    int MES;
+    int MATHS;
+    int SSA;
+};
+
+int n, i;
+struct Student s[100]; // Adjust the array size as needed
+
+// Function to check if a student is eligible for exams based on subjects
+int checkEligibility()
+{
+    int rollnumber;
+    printf("Enter the roll number: ");
+    scanf("%d", &rollnumber);
+
+    for (i = 0; i < n; i++)
+    {
+        if (s[i].rollNumber == rollnumber)
+        {
+            if (s[i].attendance >= 75 && s[i].feesPaid == 1  )
+            {
+                s[i].eligible = 1;
+                printf("Student %d is eligible for exams.\n", s[i].rollNumber);
+                return 1; // Student is eligible
+            }
+            else
+            {
+                if(s[i].attendance < 75)
+                printf("Student %d is not eligible for exams due to attendance shortage.\n Attendance = %d.\n", s[i].rollNumber,s[i].attendance);
+                if(s[i].feesPaid!=1)
+                printf("Student %d is not eligible for exams due to balance fees.\n", s[i].rollNumber);
+
+                return 0; // Student is not eligible
+            }
+        }
+    }
+
+    printf("Student with roll number %d not found.\n", rollnumber);
+    return -1; // Student not found
+}
+
+// Function to display student information including subjects
+void displayStudentInfo()
+{
+      FILE *ptr=fopen("Student.txt","a");
+    for (i = 0; i < n; i++)
+    {
+        printf("Name: %s\n", s[i].name);
+        printf("Roll Number: %d\n", s[i].rollNumber);
+        printf("Attendance: %d%%\n", s[i].attendance);
+        printf("Fees Paid: %s\n", s[i].feesPaid ? "Yes" : "No");
+
+    }
+}
+
+// Function to update student attendance
+void updateAttendance()
+{
+    
+    int newAttendance, rollnumber;
+    printf("Enter the roll number: ");
+    scanf("%d", &rollnumber);
+FILE *ptr=fopen("Student.txt","a");
+    for (i = 0; i < n; i++)
+    {
+        if (s[i].rollNumber == rollnumber)
+        {
+            printf("Enter new attendance percentage: ");
+            scanf("%d", &newAttendance);
+
+            if (newAttendance >= 0 && newAttendance <= 100)
+            {
+                s[i].attendance = newAttendance;
+                printf("Attendance updated for Student %d.\n", s[i].rollNumber);
+            }
+            else
+            {
+                printf("Invalid attendance percentage. Attendance not updated.\n");
+            }
+            return;
+        }
+    }
+
+    printf("Student with roll number %d not found.\n", rollnumber);
+}
+
+// Function to update fees payment status
+void updateFeesStatus()
+{
+    
+    char choice;
+    int rollnumber;
+    printf("Enter the roll number: ");
+    scanf("%d", &rollnumber);
+
+    for (i = 0; i < n; i++)
+    {
+        if (s[i].rollNumber == rollnumber)
+        {
+            printf("Has the student paid the fees? (Y/N): ");
+            scanf(" %c", &choice);
+
+            if (choice == 'Y' || choice == 'y')
+            {
+                s[i].feesPaid = 1; // Fees paid
+                printf("Fees status updated for Student %d.\n", s[i].rollNumber);
+            }
+            else
+            {
+                s[i].feesPaid = 0; // Fees not paid
+                printf("Fees status updated for Student %d.\n", s[i].rollNumber);
+            }
+            return;
+        }
+    }
+
+    printf("Student with roll number %d not found.\n", rollnumber);
+}
+
+// Function to calculate the grade based on the average of the five subjects
+void calculateResult()
+{
+    int rollnumber;
+    printf("Enter the roll number: ");
+    scanf("%d", &rollnumber);
+
+    for (i = 0; i < n; i++)
+    {
+        if (s[i].rollNumber == rollnumber)
+        {
+            // Input marks for each subject
+            printf("Enter marks for SE: ");
+            scanf("%d", &s[i].SE);
+
+            printf("Enter marks for DAA: ");
+            scanf("%d", &s[i].DAA);
+
+            printf("Enter marks for MES: ");
+            scanf("%d", &s[i].MES);
+
+            printf("Enter marks for MATHS: ");
+            scanf("%d", &s[i].MATHS);
+
+            printf("Enter marks for SSA: ");
+            scanf("%d", &s[i].SSA);
+
+            // Calculate the average of the five subjects
+            int average = (s[i].SE + s[i].DAA + s[i].MES + s[i].MATHS + s[i].SSA) / 5;
+
+            printf("Average Marks: %d\n", average);
+
+            // Assign a grade based on the average points
+            char grade;
+            if (average >= 90)
+                grade = 'A';
+            else if (average >= 80)
+                grade = 'B';
+            else if (average >= 70)
+                grade = 'C';
+            else if (average >= 60)
+                grade = 'D';
+            else
+                grade = 'F';
+
+            printf("Grade: %c\n", grade);
+            return;
+        }
+    }
+
+    printf("Student with roll number %d not found.\n", rollnumber);
+}
+
+int main()
+{
+    int choice;
+
+    printf("Enter the number of students: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++)
+    {
+        printf("Enter student information for student %d:\n", i + 1);
+        printf("Name: ");
+        scanf("%s", s[i].name);
+        printf("Roll Number: ");
+        scanf("%d", &s[i].rollNumber);
+        printf("Attendance: ");
+        scanf("%d", &s[i].attendance);
+        printf("Fees Paid (1 for Yes, 0 for No): ");
+        scanf("%d", &s[i].feesPaid);
+        s[i].SE = 0; // Initialize subject marks to 0
+        s[i].DAA = 0;
+        s[i].MES = 0;
+        s[i].MATHS = 0;
+        s[i].SSA = 0;
+    }
+
+    while (1)
+    {
+        printf("\n--- Exam Management System Menu ---\n");
+        printf("1. Check Eligibility\n");
+        printf("2. Display Student Information\n");
+        printf("3. Update Attendance\n");
+        printf("4. Update Fees Status\n");
+        printf("5. Calculate Marks, Grade, and Result\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+        case 1:
+            checkEligibility();
+            break;
+        case 2:
+            displayStudentInfo();
+            break;
+        case 3:
+            updateAttendance();
+            break;
+        case 4:
+            updateFeesStatus();
+            break;
+        case 5:
+            calculateResult();
+            break;
+        case 6:
+            printf("Exiting the program. Goodbye!\n");
+            return 0;
+        default:
+            printf("Invalid choice. Please enter a valid option.\n");
+            break;
+        }
+    }
+
+    return 0;
+}
